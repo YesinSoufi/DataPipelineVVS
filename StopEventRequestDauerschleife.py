@@ -6,7 +6,7 @@ currenttime = time.strftime("%Y-%m-%dT%H:%M:%S", ts)
 print (currenttime)
 timer = 0
 
-bhf = ["de:08111:6118", "de:08116:2103", "de:08111:6157", "de:08116:7800", "de:08118:7402"]
+bhf = ["de:08111:6118","de:08111:6008","de:08111:6333", "de:08116:2103", "de:08111:6157","de:08116:7800", "de:08118:7402"]
 
 hauptbahnhof = "de:08111:6118"
 universitaet = "de:08111:6008"
@@ -16,7 +16,7 @@ feuerbach = "de:08111:6157"
 esslingen = "de:08116:7800"
 ludwigsburg = "de:08118:7402"
 headers = {'User-Agent': 'Fiddler', 'Host': 'efastatic.vvs.de', 'content-type': 'text/xml',
-           "Keep-Alive": "timeout=10, max=100"}
+           "Keep-Alive": "timeout=20, max=100"}
 while timer < 1:
     for stops in bhf:
         xml = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -49,18 +49,17 @@ while timer < 1:
         root = ET.fromstring(r)
         timtabletime = root[0][5][0][1][1][0][0][3][0].text
         linie = root[0][5][0][1][1][1][5][0].text
-        """richtung = root[0][5][0][1][1][1][11][0].text
+        richtung = root[0][5][0][1][1][1][11][0].text
         estimatedtime = root[0][5][0][1][1][0][0][3][1].text
-        for child in root[0][5][0][1][1][1]:
+        """for child in root[0][5][0][1][1][1]:
         print(child.tag)"""
 
 
         print (timtabletime)
-        """print (estimatedtime)"""
+        print (estimatedtime)
         print (linie)
-        """print (richtung)"""
+        print (richtung)
     time.sleep(60)
-
 
 
 
