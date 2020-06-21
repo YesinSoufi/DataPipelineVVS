@@ -1,0 +1,71 @@
+import requests
+import xml.etree.ElementTree as ET
+import time
+import mysql.connector
+import mysql
+
+ts = time.localtime()
+currenttime = time.strftime("%Y-%m-%dT%H:%M:%S", ts)
+print (currenttime)
+timer = 0
+
+bhf = ["de:08111:6118","de:08111:6008","de:08111:6333", "de:08116:2103", "de:08111:6157","de:08116:7800", "de:08118:7402"]
+
+hauptbahnhof = "de:08111:6118"
+universitaet = "de:08111:6008"
+flughafen = "de:08116:2103"
+badcannstatt = "de:08111:6333"
+feuerbach = "de:08111:6157"
+esslingen = "de:08116:7800"
+ludwigsburg = "de:08118:7402"
+headers = {'User-Agent': 'Fiddler', 'Host': 'efastatic.vvs.de', 'content-type': 'text/xml',
+           "Keep-Alive": "timeout=20, max=100"}
+while timer < 1:
+    for stops in bhf:
+        xml = '''<?xml version="1.0" encoding="UTF-8"?>
+        <Trias version="1.1" xmlns="http://www.vdv.de/trias" xmlns:siri="http://www.siri.org.uk/siri">
+        <ServiceRequest>
+        <siri:RequestTimestamp>2020-06-18T14:00:00</siri:RequestTimestamp>
+        <siri:RequestorRef>hdm0419</siri:RequestorRef>
+        <RequestPayload>
+        <StopEventRequest>
+        <Location>
+        <LocationRef>
+        <StopPointRef>'''+stops+'''</StopPointRef>
+        </LocationRef>
+        <DepArrTime>'''+currenttime+'''</DepArrTime>
+        </Location>
+        <Params>
+        <NumberOfResults>1</NumberOfResults>
+        <StopEventType>departure</StopEventType>
+        <PtModeFilter>
+        <Exclude>false</Exclude>
+        <RailSubmode>suburbanRailway</RailSubmode>
+        </PtModeFilter>
+        <IncludeRealtimeData>true</IncludeRealtimeData>
+        </Params>
+        </StopEventRequest>
+        </RequestPayload>
+        </ServiceRequest>
+        </Trias>'''
+        r = requests.post("http://efastatic.vvs.de/hdmstuttgart/trias", data=xml, headers=headers).text
+        root = ET.fromstring(r)
+        timtabletime = root[0][5][0][1][1][0][0][3][0].text
+        linie = root[0][5][0][1][1][1][5][0].text
+        richtung = root[0][5][0][1][1][1][11][0].text
+        estimatedtime = root[0][5][0][1][1][0][0][3][1].text
+        """for child in root[0][5][0][1][1][1]:
+        print(child.tag)"""
+
+
+        print (timtabletime)
+        print (estimatedtime)
+        print (linie)
+        print (richtung)
+
+        connection = mysql.connector.connect(host="localhost", user="pssst", passwd="könnt ihr nachfragen", db="u-lb100")
+        curser = connection.cursor()
+        curser.execute("INSERT INTO vvs_testdaten (id,datum,estimated,timetabled,verspaetung,doppelcode) VALUES (%s,%s)",("","2020-06-21","2020-06-21T11:38:00Z","2020-06-21T11:38:00Z","-1","202006211138s2schorndorf"))
+        curser.close()
+        connection.commit()
+    time.sleep(60)
