@@ -2,27 +2,27 @@ import requests
 import time
 import pykafka
 from pykafka import KafkaClient
+import csv
 
 client = KafkaClient(hosts="localhost:9092")
 topic = client.topics['vvs']
 producer = topic.get_sync_producer()
 
-bhf = ["de:08111:6118","de:08111:6008","de:08111:6333", "de:08116:2103", "de:08111:6157","de:08116:7800", "de:08118:7402"]
+csv = csv.reader(open("Haltestellen.csv","r"), delimiter=";")
+list = []
+list.extend(csv)
+namen = []
 
-hauptbahnhof = "de:08111:6118"
-universitaet = "de:08111:6008"
-flughafen = "de:08116:2103"
-badcannstatt = "de:08111:6333"
-feuerbach = "de:08111:6157"
-esslingen = "de:08116:7800"
-ludwigsburg = "de:08118:7402"
+for data in list:
+    namen.append(data[1])
+
 headers = {'User-Agent': 'Fiddler', 'Host': 'efastatic.vvs.de', 'content-type': 'text/xml',
            "Keep-Alive": "timeout=20, max=100"}
 while True:
     ts = time.localtime()
     currenttime = time.strftime("%Y-%m-%dT%H:%M:%S", ts)
 
-    for stops in bhf:
+    for stops in namen:
         xml = '''<?xml version="1.0" encoding="UTF-8"?>
         <Trias version="1.1" xmlns="http://www.vdv.de/trias" xmlns:siri="http://www.siri.org.uk/siri">
         <ServiceRequest>

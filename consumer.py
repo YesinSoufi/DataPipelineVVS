@@ -17,34 +17,33 @@ for message in consumer:
         message = message.value.decode()
 
         root = ET.fromstring(message)
-        timtabletime = root[0][5][0][1][1][0][0][3][0].text
+        timtabletime = root[0][5][0][1][1][0][0][3][0].text+"h"
         linie = root[0][5][0][1][1][1][5][0].text
         richtung = root[0][5][0][1][1][1][11][0].text
-        estimatedtime = root[0][5][0][1][1][0][0][3][1].text
+        estimatedtime = root[0][5][0][1][1][0][0][3][1].text+"h"
         haltestelle = root[0][5][0][1][1][0][0][1][0].text
 
-        estdt = datetime.strptime(estimatedtime, '%Y-%m-%dT%H:%M:%SZ')
-        tbldt = datetime.strptime(timtabletime, '%Y-%m-%dT%H:%M:%SZ')
+        if len(estimatedtime) & len(timtabletime) == 21:
+            estdt = datetime.strptime(estimatedtime, '%Y-%m-%dT%H:%M:%SZh')
+            tbldt = datetime.strptime(timtabletime, '%Y-%m-%dT%H:%M:%SZh')
+            diff = (estdt-tbldt)
+            seconds = diff.total_seconds()
+            minutes = seconds/60
+            verspaetung = int(minutes)
+            tbl1 = timtabletime.split("T")
+            tbl2 = tbl1[1].split("Z")
+            est1 = estimatedtime.split("T")
+            est2 = est1[1].split("Z")
+            ts = time.localtime()
+            currentdate = time.strftime("%Y-%m-%d", ts)
+            datecode = time.strftime("%Y%m%d", ts)
+            doppelcode = str(datecode + tbl2[0] + linie + richtung)
 
-        diff = (estdt-tbldt)
-        seconds = diff.total_seconds()
-        minutes = seconds/60
-
-
-        ts = time.localtime()
-        currentdate = time.strftime("%Y-%m-%d", ts)
 
 
         """for child in root[0][5][0][1][1][1]:
             print(child.tag)"""
 
-        datecode = time.strftime("%Y%m%d", ts)
-
-        verspaetung = int(minutes)
-        tbl1 = timtabletime.split("T")
-        print (verspaetung)
-        doppelcode = str(datecode + tbl1[1] + linie + richtung)
-        print(doppelcode)
 
 
         print (timtabletime)
@@ -60,7 +59,7 @@ for message in consumer:
 
 
         curser = connection.cursor()
-        curser.execute("INSERT IGNORE INTO vvsdaten (id,datum,estimated,timetabled,verspaetung,haltestelle) VALUES (%s,%s,%s,%s,%s,%s)",(doppelcode,currentdate,estimatedtime,timtabletime,verspaetung,haltestelle))
+        curser.execute("INSERT IGNORE INTO vvsdaten (id,datum,estimated,timetabled,verspaetung,haltestelle) VALUES (%s,%s,%s,%s,%s,%s)",(doppelcode,currentdate,est2[0],tbl2[0],verspaetung,haltestelle))
         curser.close()
         connection.commit()
         print ("In Datenbank geschrieben")
