@@ -20,10 +20,11 @@ for message in consumer:
 
 
         # DEBUG für XML Probleme
-        count = 0
+        """count = 0
         for child in root[0][5][0][1][1][1]:
             print(child.tag + str(count))
-            count = count + 1
+            count = count + 1"""
+        
         # ElementTree für die Geplante Abfahrtszeit
         timtabletime = root[0][5][0][1][1][0][0][3][0].text + "h"
 
