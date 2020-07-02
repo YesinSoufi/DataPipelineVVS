@@ -8,23 +8,22 @@ import pykafka
 from pykafka import KafkaClient
 
 client = KafkaClient(hosts="localhost:9092")
-topic = client.topics['vvs']
+topic = client.topics['vvsV1']
 
 consumer = topic.get_simple_consumer()
 for message in consumer:
     if message is not None:
-        print (message.value.decode())
+        print(message.value.decode())
         message = message.value.decode()
 
         root = ET.fromstring(message)
-
 
         # DEBUG für XML Probleme
         """count = 0
         for child in root[0][5][0][1][1][1]:
             print(child.tag + str(count))
             count = count + 1"""
-        
+
         # ElementTree für die Geplante Abfahrtszeit
         timtabletime = root[0][5][0][1][1][0][0][3][0].text + "h"
 
@@ -59,9 +58,9 @@ for message in consumer:
         if len(estimatedtime) & len(timtabletime) == 21:
             estdt = datetime.strptime(estimatedtime, '%Y-%m-%dT%H:%M:%SZh')
             tbldt = datetime.strptime(timtabletime, '%Y-%m-%dT%H:%M:%SZh')
-            diff = (estdt-tbldt)
+            diff = (estdt - tbldt)
             seconds = diff.total_seconds()
-            minutes = seconds/60
+            minutes = seconds / 60
             verspaetung = int(minutes)
             tbl1 = timtabletime.split("T")
             tbl2 = tbl1[1].split("Z")
@@ -72,27 +71,24 @@ for message in consumer:
             datecode = time.strftime("%Y%m%d", ts)
             doppelcode = str(datecode + tbl2[0] + linie + richtung)
 
-
-
         """for child in root[0][5][0][1][1][1]:
             print(child.tag)"""
 
-
-
-        print (timtabletime)
-        print (estimatedtime)
-        print (linie)
-        print (richtung)
+        print(timtabletime)
+        print(estimatedtime)
+        print(linie)
+        print(richtung)
         print(haltestelle)
 
-        connection = mysql.connector.connect(host="localhost", user="root", passwd="root", db="vss")
-        print ("Connection ist da")
+        connection = mysql.connector.connect(host="localhost", user="root", passwd="root", db="vvs")
+        print("Connection ist da")
         curser = connection.cursor()
-        print ("Curser ist da")
-
+        print("Curser ist da")
 
         curser = connection.cursor()
-        curser.execute("INSERT IGNORE INTO vvsdaten (id,datum,estimated,timetabled,verspaetung,haltestelle) VALUES (%s,%s,%s,%s,%s,%s)",(doppelcode,currentdate,est2[0],tbl2[0],verspaetung,haltestelle))
+        curser.execute(
+            "INSERT IGNORE INTO vvsdaten (id,datum,estimated,timetabled,verspaetung,haltestelle,zeitstempel) VALUES (%s,%s,%s,%s,%s,%s,%s)",
+            (doppelcode, currentdate, est2[0], tbl2[0], verspaetung, haltestelle, tbldt))
         curser.close()
         connection.commit()
-        print ("In Datenbank geschrieben")
+        print("In Datenbank geschrieben")

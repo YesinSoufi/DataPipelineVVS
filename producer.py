@@ -5,7 +5,7 @@ from pykafka import KafkaClient
 import csv
 
 client = KafkaClient(hosts="localhost:9092")
-topic = client.topics['vvs']
+topic = client.topics['vvsV1']
 producer = topic.get_sync_producer()
 
 csv = csv.reader(open("Haltestellen.csv","r"), delimiter=";")
