@@ -25,7 +25,10 @@ for message in consumer:
             count = count + 1"""
 
         # ElementTree für die Geplante Abfahrtszeit
-        timtabletime = root[0][5][0][1][1][0][0][3][0].text + "h"
+        if root[0][5][0][1][1][0][0][3][0].tag == '{http://www.vdv.de/trias}TimetabledTime':
+            timtabletime = root[0][5][0][1][1][0][0][3][0].text + "h"
+        else:
+            print("Probleme bei Abfahrt")
 
         # ElementTree für die Linie
         if root[0][5][0][1][1][1][5].tag == '{http://www.vdv.de/trias}PublishedLineName':
