@@ -43,11 +43,11 @@ for message in consumer:
 
             # ElementTree für die Richtung
             if root[0][5][0][1][1][1][11].tag == '{http://www.vdv.de/trias}DestinationText':
-                richtung = root[0][5][0][1][1][1][11][0].text
+                richtung = root[0][5][0][1][1][1][11][0].text.replace("Ã¶","ö").replace("Ã","ß").replace("Ã¼","ü").replace("Ã","Ö").replace("Ã¤","ä")
             elif root[0][5][0][1][1][1][12].tag == '{http://www.vdv.de/trias}DestinationText':
-                richtung = root[0][5][0][1][1][1][12][0].text
+                richtung = root[0][5][0][1][1][1][12][0].text.replace("Ã¶","ö").replace("Ã","ß").replace("Ã¼","ü").replace("Ã","Ö").replace("Ã¤","ä")
             elif root[0][5][0][1][1][1][10].tag == '{http://www.vdv.de/trias}DestinationText':
-                richtung = root[0][5][0][1][1][1][10][0].text
+                richtung = root[0][5][0][1][1][1][10][0].text.replace("Ã¶","ö").replace("Ã","ß").replace("Ã¼","ü").replace("Ã","Ö").replace("Ã¤","ä")
             else:
                 print("Probleme bei der XML-Antwort: DestinationText ist weder Child Nr. 11 noch Nr.12 noch Nr.10")
 
@@ -59,7 +59,7 @@ for message in consumer:
 
             # ElementTree für die Haltestelle
             if root[0][5][0][1][1][0][0][1].tag == '{http://www.vdv.de/trias}StopPointName':
-                haltestelle = root[0][5][0][1][1][0][0][1][0].text
+                haltestelle = root[0][5][0][1][1][0][0][1][0].text.replace("Ã¶","ö").replace("Ã","ß").replace("Ã¼","ü").replace("Ã","Ö").replace("Ã¤","ä")
             else:
                 print("Haltestelle nicht verfügbar")
 
