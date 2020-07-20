@@ -5,10 +5,10 @@ from pykafka import KafkaClient
 import csv
 
 client = KafkaClient(hosts="localhost:9092")
-topic = client.topics['ubahnV1']
+topic = client.topics['ubahndaten']
 producer = topic.get_sync_producer()
 
-csv = csv.reader(open("Haltestellen.csv","r"), delimiter=";")
+csv = csv.reader(open("Haltestellen2.csv","r"), delimiter=";")
 list = []
 list.extend(csv)
 namen = []
@@ -32,7 +32,7 @@ while True:
         <StopEventRequest>
         <Location>
         <LocationRef>
-        <StopPointRef>de:08111:28</StopPointRef>
+        <StopPointRef>''' + stops + '''</StopPointRef>
         </LocationRef>
         <DepArrTime>''' + currenttime + '''</DepArrTime>
         </Location>
@@ -55,7 +55,6 @@ while True:
         print ("Encoder fertig")
         producer.produce(message)
         print("Ist im Producer")
-        time.sleep(60)
 
 
-    time.sleep(60)
+    time.sleep(15)
