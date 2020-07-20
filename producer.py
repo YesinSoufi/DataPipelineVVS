@@ -5,7 +5,7 @@ from pykafka import KafkaClient
 import csv
 
 client = KafkaClient(hosts="localhost:9092")
-topic = client.topics['test']
+topic = client.topics['vvsV5']
 producer = topic.get_sync_producer()
 
 csv = csv.reader(open("Haltestellen.csv","r"), delimiter=";")
@@ -17,7 +17,7 @@ for data in list:
     namen.append(data[1])
 
 headers = {'User-Agent': 'Fiddler', 'Host': 'efastatic.vvs.de', 'content-type': 'text/xml',
-           "Keep-Alive": "timeout=20, max=100"}
+           "Keep-Alive": "timeout=200, max=1000"}
 while True:
     ts = time.localtime()
     currenttime = time.strftime("%Y-%m-%dT%H:%M:%S", ts)
@@ -55,6 +55,7 @@ while True:
         print ("Encoder fertig")
         producer.produce(message)
         print("Ist im Producer")
+        print(currenttime)
 
 
     time.sleep(60)
