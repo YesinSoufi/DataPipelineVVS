@@ -8,17 +8,19 @@ import pykafka
 from pykafka import KafkaClient
 
 client = KafkaClient(hosts="localhost:9092")
-topic = client.topics['test']
+topic = client.topics['vvsV5']
+
 
 consumer = topic.get_simple_consumer()
+
 for message in consumer:
     if message is not None:
-        print(message.value.decode())
+
         message = message.value.decode()
 
         print(len(message))  # 1500 Grenze
 
-        if len(message) > 1500:
+        if len(message) > 1346:
             root = ET.fromstring(message)
 
             # DEBUG für XML Probleme
