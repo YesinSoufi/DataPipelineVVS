@@ -8,12 +8,12 @@ import pykafka
 from pykafka import KafkaClient
 
 client = KafkaClient(hosts="localhost:9092")
-topic = client.topics['ubahnV1']
+topic = client.topics['ubahndaten']
 
 consumer = topic.get_simple_consumer()
 for message in consumer:
     if message is not None:
-        print(message.value.decode())
+
         message = message.value.decode()
 
         print(len(message))  # 1500 Grenze
@@ -92,7 +92,13 @@ for message in consumer:
                         print(richtung)
                         print(verspaetung)
 
-                        if verspaetung != 0:
+                        currenttime = datetime.now()
+                        timedif = (tbldt - currenttime)
+                        secondsdif = timedif.total_seconds()
+                        minutesdif = seconds / 60
+                        print(minutesdif)
+
+                        if verspaetung != 0 and minutesdif < 10:
                             connection = mysql.connector.connect(host="35.246.241.173", user="root", passwd="root",
                                                                  db="vvscloud")
                             print("Connection ist da")
